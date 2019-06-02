@@ -23,9 +23,9 @@
 
 #pragma once
 
-#include <core/Godot.hpp>
+#include "core/Godot.hpp"
 
-class ComChibifireSceneOptimize : public Reference {
+class ComChibifireSceneOptimize : public godot::Reference {
 private:
 	GODOT_CLASS(ComChibifireSceneOptimize, Reference);
 public:
