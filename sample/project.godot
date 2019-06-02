@@ -1,0 +1,45 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[  ]
+_global_script_class_icons={
+
+}
+
+[application]
+
+name="FBX Sample"
+main_scene=""
+icon="res://icon.png"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "com_chibifire_fbx_importer" )
+
+[filesystem]
+
+import/open_asset_import/use_fbx=false
+import/open_asset_import/use_mmd=false
+
+[gdnative]
+
+singletons=[  ]
+
+[memory]
+
+multithread/thread_rid_pool_prealloc=60
+
+[rendering]
+
+threads/thread_model=2
+quality/filters/anisotropic_filter_level=16
+vram_compression/import_etc2=false
+quality/filters/msaa=2
+viewport/default_environment="res://default_env.tres"
