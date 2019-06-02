@@ -24,13 +24,18 @@
 #pragma once
 
 #include "core/Godot.hpp"
+#include "gen/ArrayMesh.hpp"
 #include "gen/EditorScenePostImport.hpp"
 #include "gen/Mesh.hpp"
+#include "gen/MeshDataTool.hpp"
 #include "gen/MeshInstance.hpp"
 #include "gen/Node.hpp"
 #include "gen/Spatial.hpp"
+#include "gen/SurfaceTool.hpp"
 #include "openvdb/openvdb.h"
 #include <MeshToVolume.h>
+#include <VolumeToMesh.h>
+#include <vector>
 
 typedef std::vector<int> MeshDataFace;
 
@@ -47,13 +52,14 @@ struct MeshDataAdapter {
 	}
 };
 
+using namespace std;
 using namespace godot;
 
 class ComChibifireSceneOptimize : public godot::EditorScenePostImport {
 private:
 	GODOT_CLASS(ComChibifireSceneOptimize, EditorScenePostImport);
 
-	MeshDataAdapter mesh;
+	MeshDataAdapter vdb_mesh;
 
 public:
 	godot::Object *post_import(godot::Object *p_node) {
@@ -64,23 +70,52 @@ public:
 		spatial->set_owner(node);
 		Array arr;
 		arr = _find_mesh_instances(node, arr);
-		for (size_t i = 0; i < arr.size(); i++) {
+		for (int32_t i = 0; i < arr.size(); i++) {
 			MeshInstance *mi = Object::cast_to<MeshInstance>(arr[i]);
-			mi->set_mesh(NULL);
+			const double voxel_size = 1.0f;
+			const double inv_voxel_size = 1 / voxel_size;
+			const double bandwidth = 10.0f;
+			Ref<MeshDataTool> mdt = MeshDataTool::_new();
+			Ref<ArrayMesh> arr_mesh = ArrayMesh::_new();
+			for (int32_t j = 0; j < mi->get_surface_material_count(); j++) {
+				Ref<ArrayMesh> godot_mesh = mi->get_mesh();
+				mdt->create_from_surface(godot_mesh, j);
+				for (int32_t k = 0; k < mdt->get_vertex_count(); k++) {
+					Vector3 vert = mdt->get_vertex(k);
+					vdb_mesh.vertices.push_back(openvdb::Vec3d(vert.x * inv_voxel_size, vert.y * inv_voxel_size, vert.z * inv_voxel_size));
+				}
+				for (int32_t k = 0; k < mdt->get_face_count(); k++) {
+					MeshDataFace face;
+					for (int32_t l = 0; l < 3; l++) {
+						int64_t index = mdt->get_face_vertex(l, l);
+						face.push_back(index);
+					}
+					vdb_mesh.faces.push_back(face);
+				}
+				openvdb::FloatGrid::Ptr volume = openvdb::tools::meshToVolume<openvdb::FloatGrid, MeshDataAdapter>(vdb_mesh, openvdb::math::Transform(), bandwidth, bandwidth, 0, NULL);
+				volume->setTransform(openvdb::math::Transform::createLinearTransform(voxel_size));
+				double isovalue = 0.0;
+				double adaptivity = 0.5;
+				isovalue /= volume->voxelSize().x();
+				std::vector<openvdb::Vec3s> points;
+				std::vector<openvdb::Vec3I> triangles;
+				std::vector<openvdb::Vec4I> quads;
+				openvdb::tools::volumeToMesh<openvdb::FloatGrid>(*volume, points, triangles, quads, isovalue, adaptivity);
+				Ref<SurfaceTool> st = SurfaceTool::_new();
+				for (openvdb::Vec3I v : triangles) {
+					Vector3 vec;
+					vec.x = v.x();
+					vec.y = v.y();
+					vec.z = v.z();
+					st->add_vertex(vec);
+				}
+				mi->set_mesh(st->commit()->duplicate(true));
+				//TODO multiple surfaces
+				break;
+			}
 		}
-		// mesh data
-		// voxel size
-		// bandwidth
-		// output volume
-
 		// Next feature
 		// UVs, Normals and bone data
-
-		// input volume
-		// surface isovalue
-		// adaptivity
-		// output mesh data
-
 		return node;
 	}
 
@@ -97,7 +132,9 @@ public:
 
 	ComChibifireSceneOptimize() {
 	}
-	void _init() {}
+	void _init() {
+		openvdb::initialize();
+	}
 	static void _register_methods() {
 		register_method("post_import", &ComChibifireSceneOptimize::post_import);
 	}

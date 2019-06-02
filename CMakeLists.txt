@@ -34,6 +34,8 @@ if(APPLE)
 target_link_libraries(com_chibifire_openvdb 
 ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/godot-cpp/bin/libgodot-cpp.osx.release.64.a
 /usr/local/Cellar/openvdb/6.1.0/lib/libopenvdb.dylib
+/usr/local/opt/tbb/lib/libtbb.dylib
+/usr/local/opt/ilmbase/lib/libHalf.dylib
 "-framework Cocoa")
 elseif(MSVC)
 target_link_libraries(com_chibifire_openvdb
