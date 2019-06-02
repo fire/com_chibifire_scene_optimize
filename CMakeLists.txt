@@ -7,7 +7,6 @@ set(DEBUG_ENABLED DEBUG_ENABLED DEBUG_MEMORY_ENABLED)
 set(TOOLS_ENABLED TOOLS_ENABLED)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/sample/addons/com_chibifire_openvdb/bin/osx.64)
-
 add_library(com_chibifire_openvdb
             SHARED
         "sample/addons/com_chibifire_scene_optimize/src/Godot.cpp"
@@ -27,11 +26,14 @@ target_include_directories(com_chibifire_openvdb
                             "thirdparty/godot-cpp/include"
                             "thirdparty/godot-cpp/include/gen"
                             "thirdparty/godot-cpp/godot_headers"
-                            "thirdparty/godot-cpp/include/core")
+                            "thirdparty/godot-cpp/include/core"
+                            "thirdparty/openvdb/openvdb/tools"
+                            /usr/local/include)
 
 if(APPLE)
 target_link_libraries(com_chibifire_openvdb 
 ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/godot-cpp/bin/libgodot-cpp.osx.release.64.a
+/usr/local/Cellar/openvdb/6.1.0/lib/libopenvdb.dylib
 "-framework Cocoa")
 elseif(MSVC)
 target_link_libraries(com_chibifire_openvdb
