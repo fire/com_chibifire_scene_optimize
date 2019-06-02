@@ -24,30 +24,44 @@
 #pragma once
 
 #include "core/Godot.hpp"
+#include "gen/EditorScenePostImport.hpp"
 #include "openvdb/openvdb.h"
 #include <MeshToVolume.h>
 
 typedef std::vector<int> MeshDataFace;
 
 struct MeshDataAdapter {
-  std::vector<openvdb::Vec3d> vertices;
-  std::vector<MeshDataFace> faces;
+	std::vector<openvdb::Vec3d> vertices;
+	std::vector<MeshDataFace> faces;
 
-  inline size_t polygonCount() const { return faces.size(); };
-  inline size_t pointCount() const { return vertices.size(); }; 
-  inline size_t vertexCount(size_t n) const { return faces[n].size(); };
+	inline size_t polygonCount() const { return faces.size(); };
+	inline size_t pointCount() const { return vertices.size(); };
+	inline size_t vertexCount(size_t n) const { return faces[n].size(); };
 
-  inline void getIndexSpacePoint(size_t n, size_t v, openvdb::Vec3d& pos) const {
-    pos = vertices[faces[n][v]];
-  }
+	inline void getIndexSpacePoint(size_t n, size_t v, openvdb::Vec3d &pos) const {
+		pos = vertices[faces[n][v]];
+	}
 };
 
-class ComChibifireSceneOptimize : public godot::Reference {
+class ComChibifireSceneOptimize : public godot::EditorScenePostImport {
 private:
-	GODOT_CLASS(ComChibifireSceneOptimize, Reference);
+	GODOT_CLASS(ComChibifireSceneOptimize, EditorScenePostImport);
+
 public:
 	ComChibifireSceneOptimize() {
-		 MeshDataAdapter mesh;
+		MeshDataAdapter mesh;
+		// mesh data
+		// voxel size
+		// bandwidth
+		// output volume
+
+		// Next feature
+		// UVs, Normals and bone data
+
+		// input volume
+		// surface isovalue
+		// adaptivity
+		// output mesh data
 	}
 	static void _register_methods() {}
 };
