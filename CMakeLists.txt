@@ -44,3 +44,10 @@ ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/godot-cpp/bin/libgodot-cpp.linux.release.
 endif()
 
 file(COPY sample DESTINATION .)
+
+set_target_properties( com_chibifire_openvdb
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/addons/com_chibifire_scene_optimize/lib/mac/"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/addons/com_chibifire_scene_optimize/lib/mac/"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/addons/com_chibifire_scene_optimize/lib/mac/"
+)
