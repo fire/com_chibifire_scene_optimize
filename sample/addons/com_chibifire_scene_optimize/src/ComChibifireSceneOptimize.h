@@ -54,7 +54,8 @@ private:
 	MeshDataAdapter mesh;
 
 public:
-	godot::Node *post_import(godot::Node *node) {
+	godot::Object *post_import(godot::Object *p_node) {
+		Node *node = Node::cast_to<Node>(p_node);
 		godot::Spatial *spatial = godot::Spatial::_new();
 		spatial->set_name("SceneOptimzeTest");
 		node->add_child(spatial);
@@ -75,6 +76,7 @@ public:
 		// adaptivity
 		// output mesh data
 	}
+	void _init() {}
 	static void _register_methods() {
 		register_method("post_import", &ComChibifireSceneOptimize::post_import);
 	}

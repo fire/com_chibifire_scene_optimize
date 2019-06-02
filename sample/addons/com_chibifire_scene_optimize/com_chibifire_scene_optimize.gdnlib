@@ -8,11 +8,7 @@ reloadable=false
 [entry]
 
 OSX.64="res://addons/com_chibifire_scene_optimize/bin/osx.64/libcom_chibifire_scene_optimize_osx.dylib"
-Windows.64="res://addons/com_chibifire_scene_optimize/bin/windows.64/RelWithDebInfo/com_chibifire_scene_optimize.dll"
-X11.64="res://addons/com_chibifire_scene_optimize/bin/x11.64/libcom_chibifire_scene_optimize.so"
 
 [dependencies]
 
 OSX.64=[  ]
-Windows.64=[  ]
-X11.64=[  ]
