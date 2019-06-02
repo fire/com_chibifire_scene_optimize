@@ -28,7 +28,7 @@ target_include_directories(com_chibifire_openvdb
                             "thirdparty/godot-cpp/godot_headers"
                             "thirdparty/godot-cpp/include/core"
                             "thirdparty/openvdb/openvdb/tools"   
-                            C:/tools/vcpkg/installed/x86-windows/include
+                            C:/tools/vcpkg/installed/x64-windows/include
                             /usr/local/Cellar/openvdb/6.1.0/include/
                             /usr/local/include)
 
@@ -39,7 +39,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/godot-cpp/bin/libgodot-cpp.osx.release.64
 /usr/local/opt/tbb/lib/libtbb.dylib
 /usr/local/opt/ilmbase/lib/libHalf.dylib
 "-framework Cocoa")
-set_target_properties( com_chibifire_openvdb
+set_target_properties(com_chibifire_openvdb
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/addons/com_chibifire_scene_optimize/lib/mac/"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/addons/com_chibifire_scene_optimize/lib/mac/"
@@ -48,9 +48,9 @@ set_target_properties( com_chibifire_openvdb
 elseif(MSVC)
 target_link_libraries(com_chibifire_openvdb
 ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/godot-cpp/bin/libgodot-cpp.windows.release.default
-"C:/tools/vcpkg/installed/x86-windows/lib/openvdb.lib"
-"C:/tools/vcpkg/installed/x86-windows/lib/tbb.lib"
-"C:/tools/vcpkg/installed/x86-windows/lib/Half-2_3_s.lib")
+"C:/tools/vcpkg/installed/x64-windows/lib/openvdb.lib"
+"C:/tools/vcpkg/installed/x64-windows/lib/tbb.lib"
+"C:/tools/vcpkg/installed/x64-windows/lib/Half-2_3_s.lib")
 set_target_properties(com_chibifire_openvdb
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/addons/com_chibifire_scene_optimize/lib/win/"
