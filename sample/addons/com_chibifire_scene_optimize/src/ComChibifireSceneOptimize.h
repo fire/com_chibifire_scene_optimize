@@ -24,6 +24,7 @@
 #pragma once
 
 #include "core/Godot.hpp"
+#include "gen/Node.hpp"
 #include "gen/EditorScenePostImport.hpp"
 #include "openvdb/openvdb.h"
 #include <MeshToVolume.h>
@@ -47,9 +48,13 @@ class ComChibifireSceneOptimize : public godot::EditorScenePostImport {
 private:
 	GODOT_CLASS(ComChibifireSceneOptimize, EditorScenePostImport);
 
+	MeshDataAdapter mesh;
+
 public:
+	godot::Node *post_import(godot::Node *node) {
+		return node;
+	}
 	ComChibifireSceneOptimize() {
-		MeshDataAdapter mesh;
 		// mesh data
 		// voxel size
 		// bandwidth
@@ -63,5 +68,7 @@ public:
 		// adaptivity
 		// output mesh data
 	}
-	static void _register_methods() {}
+	static void _register_methods() {
+		register_method("post_import", &ComChibifireSceneOptimize::post_import);
+	}
 };
