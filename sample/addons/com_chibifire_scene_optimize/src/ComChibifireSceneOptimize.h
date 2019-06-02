@@ -25,6 +25,7 @@
 
 #include "core/Godot.hpp"
 #include "gen/Node.hpp"
+#include "gen/Spatial.hpp"
 #include "gen/EditorScenePostImport.hpp"
 #include "openvdb/openvdb.h"
 #include <MeshToVolume.h>
@@ -44,6 +45,8 @@ struct MeshDataAdapter {
 	}
 };
 
+using namespace godot;
+
 class ComChibifireSceneOptimize : public godot::EditorScenePostImport {
 private:
 	GODOT_CLASS(ComChibifireSceneOptimize, EditorScenePostImport);
@@ -52,6 +55,10 @@ private:
 
 public:
 	godot::Node *post_import(godot::Node *node) {
+		godot::Spatial *spatial = godot::Spatial::_new();
+		spatial->set_name("SceneOptimzeTest");
+		node->add_child(spatial);
+		spatial->set_owner(node);
 		return node;
 	}
 	ComChibifireSceneOptimize() {
