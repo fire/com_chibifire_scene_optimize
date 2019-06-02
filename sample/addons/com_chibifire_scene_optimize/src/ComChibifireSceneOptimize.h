@@ -24,9 +24,11 @@
 #pragma once
 
 #include "core/Godot.hpp"
+#include "gen/EditorScenePostImport.hpp"
+#include "gen/Mesh.hpp"
+#include "gen/MeshInstance.hpp"
 #include "gen/Node.hpp"
 #include "gen/Spatial.hpp"
-#include "gen/EditorScenePostImport.hpp"
 #include "openvdb/openvdb.h"
 #include <MeshToVolume.h>
 
@@ -60,9 +62,12 @@ public:
 		spatial->set_name("SceneOptimzeTest");
 		node->add_child(spatial);
 		spatial->set_owner(node);
-		return node;
-	}
-	ComChibifireSceneOptimize() {
+		Array arr;
+		arr = _find_mesh_instances(node, arr);
+		for (size_t i = 0; i < arr.size(); i++) {
+			MeshInstance *mi = Object::cast_to<MeshInstance>(arr[i]);
+			mi->set_mesh(NULL);
+		}
 		// mesh data
 		// voxel size
 		// bandwidth
@@ -75,6 +80,22 @@ public:
 		// surface isovalue
 		// adaptivity
 		// output mesh data
+
+		return node;
+	}
+
+	Array _find_mesh_instances(Node *p_node, Array &p_arr) {
+		for (size_t i = 0; i < p_node->get_child_count(); i++) {
+			MeshInstance *mi = Node::cast_to<MeshInstance>(p_node->get_child(i));
+			if (mi != NULL) {
+				p_arr.push_back(mi);
+			}
+			_find_mesh_instances(p_node->get_child(i), p_arr);
+		}
+		return p_arr;
+	}
+
+	ComChibifireSceneOptimize() {
 	}
 	void _init() {}
 	static void _register_methods() {
