@@ -37,7 +37,7 @@
 #include <VolumeToMesh.h>
 #include <vector>
 
-typedef std::vector<int> MeshDataFace;
+typedef std::vector<int32_t> MeshDataFace;
 
 struct MeshDataAdapter {
 	std::vector<openvdb::Vec3d> vertices;
@@ -59,27 +59,23 @@ class ComChibifireSceneOptimize : public godot::EditorScenePostImport {
 private:
 	GODOT_CLASS(ComChibifireSceneOptimize, EditorScenePostImport);
 
-	MeshDataAdapter vdb_mesh;
 
 public:
 	godot::Object *post_import(godot::Object *p_node) {
 		Node *node = Node::cast_to<Node>(p_node);
-		godot::Spatial *spatial = godot::Spatial::_new();
-		spatial->set_name("SceneOptimzeTest");
-		node->add_child(spatial);
-		spatial->set_owner(node);
 		Array arr;
 		arr = _find_mesh_instances(node, arr);
 		for (int32_t i = 0; i < arr.size(); i++) {
 			MeshInstance *mi = Object::cast_to<MeshInstance>(arr[i]);
 			const double voxel_size = 1.0f;
-			const double inv_voxel_size = 1 / voxel_size;
+			const double inv_voxel_size = 1.0f / voxel_size;
 			const double bandwidth = 10.0f;
 			Ref<MeshDataTool> mdt = MeshDataTool::_new();
 			Ref<ArrayMesh> arr_mesh = ArrayMesh::_new();
 			for (int32_t j = 0; j < mi->get_surface_material_count(); j++) {
 				Ref<ArrayMesh> godot_mesh = mi->get_mesh();
 				mdt->create_from_surface(godot_mesh, j);
+				MeshDataAdapter vdb_mesh;
 				for (int32_t k = 0; k < mdt->get_vertex_count(); k++) {
 					Vector3 vert = mdt->get_vertex(k);
 					vdb_mesh.vertices.push_back(openvdb::Vec3d(vert.x * inv_voxel_size, vert.y * inv_voxel_size, vert.z * inv_voxel_size));
@@ -87,7 +83,8 @@ public:
 				for (int32_t k = 0; k < mdt->get_face_count(); k++) {
 					MeshDataFace face;
 					for (int32_t l = 0; l < 3; l++) {
-						int64_t index = mdt->get_face_vertex(l, l);
+						//32 bit indexes only?
+						int32_t index = (int32_t)mdt->get_face_vertex(k, l);
 						face.push_back(index);
 					}
 					vdb_mesh.faces.push_back(face);
@@ -102,16 +99,20 @@ public:
 				std::vector<openvdb::Vec4I> quads;
 				openvdb::tools::volumeToMesh<openvdb::FloatGrid>(*volume, points, triangles, quads, isovalue, adaptivity);
 				Ref<SurfaceTool> st = SurfaceTool::_new();
-				for (openvdb::Vec3I v : triangles) {
+
+				for (int m = 0; m < points.size(); m++) {
 					Vector3 vec;
-					vec.x = v.x();
-					vec.y = v.y();
-					vec.z = v.z();
+					vec.x = points[m].x();
+					vec.y = points[m].y();
+					vec.z = points[m].z();
 					st->add_vertex(vec);
 				}
-				mi->set_mesh(st->commit()->duplicate(true));
-				//TODO multiple surfaces
-				break;
+				for (int n = 0; n < triangles.size(); n++) {
+					st->add_index(triangles[n][2] + 1);
+					st->add_index(triangles[n][1] + 1);
+					st->add_index(triangles[n][0] + 1);
+				}
+				mi->set_mesh(st->commit());
 			}
 		}
 		// Next feature

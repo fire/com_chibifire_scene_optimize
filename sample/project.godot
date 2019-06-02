@@ -21,7 +21,7 @@ icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "com_chibifire_fbx_importer" )
+enabled=PoolStringArray(  )
 
 [filesystem]
 

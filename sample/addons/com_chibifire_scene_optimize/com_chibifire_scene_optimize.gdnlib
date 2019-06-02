@@ -1,14 +1,14 @@
 [general]
 
-symbol_prefix="godot_"
 singleton=false
 load_once=true
-reloadable=false
+symbol_prefix="godot_"
+reloadable=true
 
 [entry]
 
-OSX.64="res://addons/com_chibifire_scene_optimize/bin/osx.64/libcom_chibifire_scene_optimize_osx.dylib"
+Windows.64="res://addons/com_chibifire_scene_optimize/lib/win/RelWithDebInfo/com_chibifire_scene_optimize.dll"
 
 [dependencies]
 
-OSX.64=[  ]
+Windows.64=[  ]
