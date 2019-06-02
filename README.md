@@ -1,4 +1,4 @@
-# Godot Fbx importer
+# Godot Scene Optimize
 
 A openvdb plugin for Godot Engine 3.2 master.
 
