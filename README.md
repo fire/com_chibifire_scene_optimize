@@ -15,6 +15,7 @@ Windows
 Installing Dependencies (Boost, TBB, OpenEXR, Blosc)
 
 ```
+set VCPKG_DEFAULT_TRIPLET=x64-windows
 ./vcpkg install boost zlib blosc openexr tbb openvdb
 ./vcpkg integrate install
 ```
