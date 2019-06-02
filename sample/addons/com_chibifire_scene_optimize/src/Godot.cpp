@@ -1,5 +1,5 @@
 #include "ComChibifireSceneOptimize.h"
-#include <Godot.hpp>
+#include "core/Godot.hpp"
 
 using namespace godot;
 

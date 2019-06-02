@@ -23,3 +23,5 @@
 
 // Major portions from the main source file of fbx2glTF.
 // See licenses.
+
+#include "ComChibifireSceneOptimize.h"
