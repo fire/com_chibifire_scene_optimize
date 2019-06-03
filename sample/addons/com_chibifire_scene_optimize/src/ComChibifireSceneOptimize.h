@@ -59,7 +59,6 @@ class ComChibifireSceneOptimize : public godot::EditorScenePostImport {
 private:
 	GODOT_CLASS(ComChibifireSceneOptimize, EditorScenePostImport);
 
-
 public:
 	godot::Object *post_import(godot::Object *p_node) {
 		Node *node = Node::cast_to<Node>(p_node);
@@ -95,11 +94,10 @@ public:
 				double adaptivity = 0.5;
 				isovalue /= volume->voxelSize().x();
 				std::vector<openvdb::Vec3s> points;
-				std::vector<openvdb::Vec3I> triangles;
 				std::vector<openvdb::Vec4I> quads;
-				openvdb::tools::volumeToMesh<openvdb::FloatGrid>(*volume, points, triangles, quads, isovalue, adaptivity);
+				openvdb::tools::volumeToMesh<openvdb::FloatGrid>(*volume, points, quads, isovalue);
 				Ref<SurfaceTool> st = SurfaceTool::_new();
-
+				st->begin(Mesh::PRIMITIVE_TRIANGLES);
 				for (int m = 0; m < points.size(); m++) {
 					Vector3 vec;
 					vec.x = points[m].x();
@@ -107,17 +105,30 @@ public:
 					vec.z = points[m].z();
 					st->add_vertex(vec);
 				}
-				for (int n = 0; n < triangles.size(); n++) {
-					st->add_index(triangles[n][2] + 1);
-					st->add_index(triangles[n][1] + 1);
-					st->add_index(triangles[n][0] + 1);
+
+				//https://stackoverflow.com/a/43422763/381724
+				for (int m = 0; m < quads.size(); m++) {
+					vector<int> quad_points;
+					quad_points.push_back(quads[m].x());
+					quad_points.push_back(quads[m].y());
+					quad_points.push_back(quads[m].z());
+					quad_points.push_back(quads[m].w());
+					int n = 0;
+					st->add_index(quad_points[2]);
+					st->add_index(quad_points[1]);
+					st->add_index(quad_points[0]);
+					for (i = 3; i < quad_points.size(); i++) {
+						st->add_index(quad_points[i]);
+						st->add_index(quad_points[i - 1]);
+						st->add_index(quad_points[i - 3]);
+					}
 				}
 				mi->set_mesh(st->commit());
 			}
+			// Next feature
+			// UVs, Normals and bone data
+			return node;
 		}
-		// Next feature
-		// UVs, Normals and bone data
-		return node;
 	}
 
 	Array _find_mesh_instances(Node *p_node, Array &p_arr) {
