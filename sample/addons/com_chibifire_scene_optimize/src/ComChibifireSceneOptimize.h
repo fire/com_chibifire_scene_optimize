@@ -41,6 +41,7 @@ typedef std::vector<int32_t> MeshDataFace;
 
 struct MeshDataAdapter {
 	std::vector<openvdb::Vec3d> vertices;
+	std::vector<openvdb::Vec2d> uvs;
 	std::vector<MeshDataFace> faces;
 
 	inline size_t polygonCount() const { return faces.size(); };
@@ -78,6 +79,8 @@ public:
 				for (int32_t k = 0; k < mdt->get_vertex_count(); k++) {
 					Vector3 vert = mdt->get_vertex(k);
 					vdb_mesh.vertices.push_back(openvdb::Vec3d(vert.x * inv_voxel_size, vert.y * inv_voxel_size, vert.z * inv_voxel_size));
+					openvdb::Vec2d uv = openvdb::Vec2d(mdt->get_vertex_uv(k).x, mdt->get_vertex_uv(k).y);
+					vdb_mesh.uvs.push_back(uv);
 				}
 				for (int32_t k = 0; k < mdt->get_face_count(); k++) {
 					MeshDataFace face;
@@ -99,6 +102,7 @@ public:
 				if (!quads.size()) {
 					continue;
 				}
+				
 				Ref<SurfaceTool> st = SurfaceTool::_new();
 				st->begin(Mesh::PRIMITIVE_TRIANGLES);
 				for (int m = 0; m < points.size(); m++) {
