@@ -69,7 +69,6 @@ public:
 			MeshInstance *mi = Object::cast_to<MeshInstance>(arr[i]);
 			const double voxel_size = 1.0f;
 			const double inv_voxel_size = 1.0f / voxel_size;
-			const double adaptivity = 0.5f; 
 			const double bandwidth = 10.0f;
 			Ref<MeshDataTool> mdt = MeshDataTool::_new();
 			Ref<ArrayMesh> arr_mesh = ArrayMesh::_new();
@@ -99,13 +98,13 @@ public:
 				double adaptivity = 0.5;
 				isovalue /= volume->voxelSize().x();
 				std::vector<openvdb::Vec3s> points;
-				std::vector<openvdb::Vec3I> triangles; // ignored
+				std::vector<openvdb::Vec3I> triangles;
 				std::vector<openvdb::Vec4I> quads;
 				openvdb::tools::volumeToMesh<openvdb::FloatGrid>(*volume, points, triangles, quads, isovalue, adaptivity);
 				if (!quads.size()) {
 					continue;
 				}
-				
+
 				Ref<SurfaceTool> st = SurfaceTool::_new();
 				st->begin(Mesh::PRIMITIVE_TRIANGLES);
 				for (int m = 0; m < points.size(); m++) {
@@ -114,6 +113,12 @@ public:
 					vec.y = points[m].y();
 					vec.z = points[m].z();
 					st->add_vertex(vec);
+				}
+
+				for (int m = 0; m < triangles.size(); m++) {
+					st->add_index(triangles[m].z());
+					st->add_index(triangles[m].y());
+					st->add_index(triangles[m].x());
 				}
 
 				//https://stackoverflow.com/a/43422763/381724
