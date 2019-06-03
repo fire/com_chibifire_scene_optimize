@@ -104,16 +104,7 @@ public:
 				if (!quads.size()) {
 					continue;
 				}
-
 				Ref<SurfaceTool> st = SurfaceTool::_new();
-				st->begin(Mesh::PRIMITIVE_TRIANGLES);
-				for (int m = 0; m < points.size(); m++) {
-					Vector3 vec;
-					vec.x = points[m].x();
-					vec.y = points[m].y();
-					vec.z = points[m].z();
-					st->add_vertex(vec);
-				}
 
 				for (int m = 0; m < triangles.size(); m++) {
 					st->add_index(triangles[m].z());
@@ -137,6 +128,14 @@ public:
 						st->add_index(quad_points[i - 1]);
 						st->add_index(quad_points[i - 3]);
 					}
+				}
+				st->begin(Mesh::PRIMITIVE_TRIANGLES);
+				for (int m = 0; m < points.size(); m++) {
+					Vector3 vec;
+					vec.x = points[m].x();
+					vec.y = points[m].y();
+					vec.z = points[m].z();
+					st->add_vertex(vec);
 				}
 				mi->set_mesh(st->commit());
 			}
