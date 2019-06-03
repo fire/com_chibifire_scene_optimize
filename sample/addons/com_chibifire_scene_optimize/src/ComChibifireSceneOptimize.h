@@ -95,6 +95,9 @@ public:
 				isovalue /= volume->voxelSize().x();
 				std::vector<openvdb::Vec3s> points;
 				std::vector<openvdb::Vec4I> quads;
+				if (!quads.size()) {
+					continue;
+				}
 				openvdb::tools::volumeToMesh<openvdb::FloatGrid>(*volume, points, quads, isovalue);
 				Ref<SurfaceTool> st = SurfaceTool::_new();
 				st->begin(Mesh::PRIMITIVE_TRIANGLES);
