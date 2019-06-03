@@ -69,6 +69,7 @@ public:
 			MeshInstance *mi = Object::cast_to<MeshInstance>(arr[i]);
 			const double voxel_size = 1.0f;
 			const double inv_voxel_size = 1.0f / voxel_size;
+			const double adaptivity = 0.5f; 
 			const double bandwidth = 10.0f;
 			Ref<MeshDataTool> mdt = MeshDataTool::_new();
 			Ref<ArrayMesh> arr_mesh = ArrayMesh::_new();
@@ -77,10 +78,11 @@ public:
 				mdt->create_from_surface(godot_mesh, j);
 				MeshDataAdapter vdb_mesh;
 				for (int32_t k = 0; k < mdt->get_vertex_count(); k++) {
-					Vector3 vert = mdt->get_vertex(k);
-					vdb_mesh.vertices.push_back(openvdb::Vec3d(vert.x * inv_voxel_size, vert.y * inv_voxel_size, vert.z * inv_voxel_size));
 					openvdb::Vec2d uv = openvdb::Vec2d(mdt->get_vertex_uv(k).x, mdt->get_vertex_uv(k).y);
 					vdb_mesh.uvs.push_back(uv);
+
+					Vector3 vert = mdt->get_vertex(k);
+					vdb_mesh.vertices.push_back(openvdb::Vec3d(vert.x * inv_voxel_size, vert.y * inv_voxel_size, vert.z * inv_voxel_size));
 				}
 				for (int32_t k = 0; k < mdt->get_face_count(); k++) {
 					MeshDataFace face;
@@ -97,8 +99,9 @@ public:
 				double adaptivity = 0.5;
 				isovalue /= volume->voxelSize().x();
 				std::vector<openvdb::Vec3s> points;
+				std::vector<openvdb::Vec3I> triangles; // ignored
 				std::vector<openvdb::Vec4I> quads;
-				openvdb::tools::volumeToMesh<openvdb::FloatGrid>(*volume, points, quads, isovalue);
+				openvdb::tools::volumeToMesh<openvdb::FloatGrid>(*volume, points, triangles, quads, isovalue, adaptivity);
 				if (!quads.size()) {
 					continue;
 				}
